@@ -1,26 +1,254 @@
+/* Hallmark · genre: playful (loud) · macrostructure: Manifesto + character chapters · theme: custom "cursed night"
+ * paper oklch(13% 0.02 285) · accents: gojo blue / hollow purple / sukuna crimson / toji steel-green
+ * Anton + Space Grotesk + Noto Serif JP (kanji outlier) · nav: N7-ish slab · footer: Ft5 statement
+ */
 @import "tailwindcss";
 
-:root {
-  --background: #ffffff;
-  --foreground: #171717;
-}
-
 @theme inline {
-  --color-background: var(--background);
-  --color-foreground: var(--foreground);
-  --font-sans: var(--font-geist-sans);
-  --font-mono: var(--font-geist-mono);
+  --color-paper: oklch(13% 0.02 285);
+  --color-paper-2: oklch(17% 0.025 285);
+  --color-rule: oklch(30% 0.03 285);
+  --color-muted: oklch(70% 0.02 285);
+  --color-ink: oklch(96% 0.01 285);
+  --color-gojo: oklch(72% 0.16 240);
+  --color-purple: oklch(62% 0.25 305);
+  --color-sukuna: oklch(60% 0.23 25);
+  --color-blood: oklch(30% 0.12 25);
+  --color-toji: oklch(72% 0.08 155);
+  --color-void: oklch(8% 0.03 280);
+
+  --font-display: var(--font-anton), Impact, sans-serif;
+  --font-sans: var(--font-space), ui-sans-serif, system-ui, sans-serif;
+  --font-kanji: var(--font-kanji), "Yu Mincho", serif;
+
+  --ease-out: cubic-bezier(0.16, 1, 0.3, 1);
 }
 
-@media (prefers-color-scheme: dark) {
-  :root {
-    --background: #0a0a0a;
-    --foreground: #ededed;
+html,
+body {
+  overflow-x: clip;
+}
+html {
+  scroll-behavior: smooth;
+}
+body {
+  background: var(--color-paper);
+  color: var(--color-ink);
+  font-family: var(--font-sans);
+  -webkit-font-smoothing: antialiased;
+}
+::selection {
+  background: var(--color-purple);
+  color: var(--color-ink);
+}
+:focus-visible {
+  outline: 2px solid var(--color-ink);
+  outline-offset: 3px;
+}
+
+/* film grain over everything — subtle, static */
+.grain::after {
+  content: "";
+  position: fixed;
+  inset: 0;
+  pointer-events: none;
+  z-index: 60;
+  opacity: 0.07;
+  background-image: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='160' height='160'><filter id='n'><feTurbulence type='fractalNoise' baseFrequency='.9' numOctaves='2'/></filter><rect width='100%' height='100%' filter='url(%23n)'/></svg>");
+}
+
+@keyframes rise {
+  from {
+    opacity: 0;
+    transform: translateY(40px) skewY(4deg);
+  }
+}
+.rise {
+  animation: rise 900ms var(--ease-out) both;
+}
+
+@keyframes marquee {
+  to {
+    transform: translateX(-50%);
+  }
+}
+.marquee {
+  animation: marquee 22s linear infinite;
+}
+
+/* ── Gojo: Blue + Red collide into Hollow Purple, on a loop ── */
+@keyframes blue-in {
+  0%, 15% { transform: translateX(-120%) scale(0.9); }
+  55%, 70% { transform: translateX(0) scale(0.6); opacity: 1; }
+  75%, 100% { transform: translateX(0) scale(0.2); opacity: 0; }
+}
+@keyframes red-in {
+  0%, 15% { transform: translateX(120%) scale(0.9); }
+  55%, 70% { transform: translateX(0) scale(0.6); opacity: 1; }
+  75%, 100% { transform: translateX(0) scale(0.2); opacity: 0; }
+}
+@keyframes purple-out {
+  0%, 68% { transform: scale(0); opacity: 0; }
+  80% { transform: scale(1.15); opacity: 1; }
+  92% { transform: scale(1); opacity: 1; }
+  100% { transform: scale(1.6); opacity: 0; }
+}
+.orb-blue { animation: blue-in 5s var(--ease-out) infinite; }
+.orb-red { animation: red-in 5s var(--ease-out) infinite; }
+.orb-purple { animation: purple-out 5s var(--ease-out) infinite; }
+
+/* ── Sukuna: slashes cut across a panel, staggered ── */
+@keyframes slash {
+  0% { transform: rotate(var(--r)) scaleX(0); opacity: 1; }
+  12% { transform: rotate(var(--r)) scaleX(1); opacity: 1; }
+  30%, 100% { transform: rotate(var(--r)) scaleX(1); opacity: 0; }
+}
+.slash {
+  position: absolute;
+  height: 2px;
+  transform-origin: left center;
+  background: linear-gradient(90deg, transparent, var(--color-ink), var(--color-sukuna), transparent);
+  animation: slash 2.6s var(--ease-out) infinite;
+}
+
+/* ── Toji: the spear turns slowly; cursed-energy meter flatlines ── */
+@keyframes turn {
+  to { transform: rotate(360deg); }
+}
+.turn { animation: turn 24s linear infinite; }
+@keyframes flat {
+  to { stroke-dashoffset: -400; }
+}
+.flatline { stroke-dasharray: 10 6; animation: flat 6s linear infinite; }
+
+/* ───────────── DOMAIN EXPANSION overlay ───────────── */
+@keyframes expand {
+  from { clip-path: circle(0% at var(--x) var(--y)); }
+  to { clip-path: circle(150% at var(--x) var(--y)); }
+}
+.domain {
+  animation: expand 1100ms cubic-bezier(0.7, 0, 0.2, 1) 650ms both;
+}
+@keyframes chant {
+  0% { opacity: 0; letter-spacing: 1.2em; filter: blur(8px); }
+  30%, 80% { opacity: 1; letter-spacing: 0.3em; filter: blur(0); }
+  100% { opacity: 0; }
+}
+.chant { animation: chant 1500ms var(--ease-out) both; }
+@keyframes title-in {
+  from { opacity: 0; transform: scale(1.6); filter: blur(12px); }
+}
+.title-in { animation: title-in 900ms var(--ease-out) 1300ms both; }
+@keyframes fade-in {
+  from { opacity: 0; }
+}
+.fade-in { animation: fade-in 700ms var(--ease-out) both; }
+
+/* Unlimited Void */
+@keyframes twinkle {
+  50% { opacity: 0.15; }
+}
+.star { position: absolute; border-radius: 9999px; background: var(--color-ink); animation: twinkle 2.4s ease-in-out infinite; }
+@keyframes warp {
+  from { transform: rotate(var(--r)) translateX(0) scaleX(0.1); opacity: 0; }
+  20% { opacity: 1; }
+  to { transform: rotate(var(--r)) translateX(70vmax) scaleX(1); opacity: 0; }
+}
+.warp {
+  position: absolute; left: 50%; top: 50%; width: 22vmax; height: 1px; transform-origin: left center;
+  background: linear-gradient(90deg, transparent, var(--color-gojo), var(--color-ink));
+  animation: warp 1.6s cubic-bezier(0.5, 0, 1, 1) infinite;
+}
+@keyframes spin {
+  to { transform: rotate(360deg); }
+}
+.hole {
+  background: conic-gradient(from 0deg, var(--color-void), var(--color-gojo), var(--color-ink), var(--color-purple), var(--color-void));
+  animation: spin 6s linear infinite;
+  filter: blur(6px);
+}
+@keyframes info {
+  from { transform: translateY(0); }
+  to { transform: translateY(-50%); }
+}
+.info { animation: info 9s linear infinite; }
+
+/* Malevolent Shrine */
+@keyframes shake {
+  0%, 100% { transform: translate(0, 0); }
+  20% { transform: translate(-6px, 4px); }
+  40% { transform: translate(5px, -5px); }
+  60% { transform: translate(-4px, -3px); }
+  80% { transform: translate(4px, 5px); }
+}
+.shake { animation: shake 260ms linear 1800ms 6; }
+.cut {
+  position: absolute; height: 3px; transform-origin: center;
+  background: linear-gradient(90deg, transparent, var(--color-ink) 40%, var(--color-sukuna) 60%, transparent);
+  box-shadow: 0 0 18px var(--color-sukuna);
+  animation: slash 1.1s var(--ease-out) infinite;
+}
+
+/* Toji: a domain tries to open… and gets cut in half */
+@keyframes split-top {
+  0%, 55% { transform: translate(0, 0); }
+  100% { transform: translate(-6%, -60%) rotate(-4deg); opacity: 0; }
+}
+@keyframes split-bottom {
+  0%, 55% { transform: translate(0, 0); }
+  100% { transform: translate(6%, 60%) rotate(4deg); opacity: 0; }
+}
+@keyframes blade {
+  0%, 40% { transform: translateX(-120%) rotate(-18deg); opacity: 0; }
+  45% { opacity: 1; }
+  58%, 100% { transform: translateX(120%) rotate(-18deg); opacity: 0; }
+}
+.half-top { clip-path: polygon(0 0, 100% 0, 100% 34%, 0 66%); animation: split-top 2.6s var(--ease-out) 1600ms both; }
+.half-bottom { clip-path: polygon(0 66%, 100% 34%, 100% 100%, 0 100%); animation: split-bottom 2.6s var(--ease-out) 1600ms both; }
+.blade {
+  position: absolute; left: -10%; top: 50%; width: 120%; height: 4px;
+  background: linear-gradient(90deg, transparent, var(--color-ink), var(--color-toji), transparent);
+  box-shadow: 0 0 24px var(--color-toji);
+  animation: blade 2.6s var(--ease-out) 1600ms both;
+}
+@keyframes glitch {
+  0%, 100% { transform: translate(0); }
+  20% { transform: translate(-3px, 2px); }
+  40% { transform: translate(3px, -2px); }
+  60% { transform: translate(-2px, -1px); }
+}
+.glitch { animation: glitch 300ms steps(2) infinite; }
+
+/* scroll-driven reveals */
+@keyframes reveal {
+  from { opacity: 0; transform: translateY(60px); }
+}
+@supports (animation-timeline: view()) {
+  @media (prefers-reduced-motion: no-preference) {
+    .reveal {
+      animation: reveal linear both;
+      animation-timeline: view();
+      animation-range: entry 0% entry 65%;
+    }
   }
 }
 
-body {
-  background: var(--background);
-  color: var(--foreground);
-  font-family: Arial, Helvetica, sans-serif;
+/* reduced motion: domains still "open", but as a calm crossfade */
+@media (prefers-reduced-motion: reduce) {
+  html { scroll-behavior: auto; }
+  .marquee, .orb-blue, .orb-red, .orb-purple, .slash, .turn, .flatline,
+  .star, .warp, .hole, .info, .shake, .cut, .blade, .glitch { animation: none; }
+  .warp, .cut, .blade { display: none; }
+  .domain, .chant, .title-in, .rise, .half-top, .half-bottom { animation: fade-in 200ms linear both; }
+}
+
+/* portrait parallax */
+@keyframes drift {
+  from { transform: translateY(-5%) scale(1.1); }
+  to { transform: translateY(5%) scale(1.1); }
+}
+@supports (animation-timeline: view()) {
+  @media (prefers-reduced-motion: no-preference) {
+    .drift { animation: drift linear both; animation-timeline: view(); animation-range: cover; }
+  }
 }
